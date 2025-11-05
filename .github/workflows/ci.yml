@@ -27,7 +27,8 @@ jobs:
 
     - name: Run Bandit
       run: |
-        bandit -r . -ll -iii -o bandit-report.json -f json
+        bandit -r . -f json -o bandit-report.json
+        bandit -r . -f screen -ll
 
     - name: Run Safety
       run: |
