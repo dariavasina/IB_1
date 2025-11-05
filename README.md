@@ -164,7 +164,7 @@ python3 app.py
 **Пример отчетов**
 `safety`
 
-![alt text](imgs/image.png)
+![alt text](image.png)
 
 `bandit report json`
 ```
