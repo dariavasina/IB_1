@@ -1,4 +1,5 @@
 import os
+import re
 import dotenv
 from flask import Flask, request, jsonify, session
 from markupsafe import escape
@@ -18,14 +19,27 @@ with app.app_context():
     db.init_db()
 
 
+def validate_login_password(login, password):
+    if not isinstance(login, str) or not isinstance(password, str):
+        return False, "Login and password must be strings"
+    if len(login) < 3 or len(login) > 50:
+        return False, "Login must be between 3 and 50 characters"
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters"
+    if not re.fullmatch(r"[A-Za-z0-9_]+", login):
+        return False, "Login can contain only letters, digits, and underscores"
+    return True, ""
+
+
 @app.route("/auth/register", methods=["POST"])
 def register():
     data = request.json
     login = data.get("login")
     password = data.get("password")
 
-    if not login or not password:
-        return jsonify({"error": "Login and password required"}), 400
+    is_valid, error_msg = validate_login_password(login, password)
+    if not is_valid:
+        return jsonify({"error": error_msg}), 400
 
     if db.create_user(login, generate_password_hash(password)):
         return jsonify({"message": "User registered successfully"}), 201
@@ -39,8 +53,9 @@ def login_user():
     login = data.get("login")
     password = data.get("password")
 
-    if not login or not password:
-        return jsonify({"error": "Login and password required"}), 400
+    is_valid, error_msg = validate_login_password(login, password)
+    if not is_valid:
+        return jsonify({"error": error_msg}), 400
 
     user = db.get_user_by_login(login)
     if user and check_password_hash(user["password_hash"], password):
@@ -59,4 +74,4 @@ def get_data():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=False)

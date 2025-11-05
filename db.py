@@ -39,3 +39,15 @@ def get_all_users():
     db = get_db()
     users = db.execute("SELECT id, login FROM users").fetchall()
     return [{"id": u["id"], "login": escape(u["login"])} for u in users]
+
+def create_user(login, password_hash):
+    db_conn = get_db()
+    try:
+        db_conn.execute(
+            "INSERT INTO users (login, password_hash) VALUES (?, ?)",
+            (login, password_hash)
+        )
+        db_conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
