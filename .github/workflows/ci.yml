@@ -31,7 +31,7 @@ jobs:
 
     - name: Run Safety
       run: |
-        safety scan --full-report
+        safety check --full-report
 
     - name: Save report
       uses: actions/upload-artifact@v4
