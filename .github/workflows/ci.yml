@@ -34,7 +34,7 @@ jobs:
         safety check --full-report
 
     - name: Save report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: bandit-report
         path: bandit-report.json
